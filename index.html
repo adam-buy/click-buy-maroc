@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Click & Buy Maroc</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f6f7fb;
+  color: #202638;
+  line-height: 1.6;
+}
+
+header {
+  background: #172342;
+  color: white;
+  padding: 20px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+header h1 {
+  font-size: 23px;
+}
+
+nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero {
+  text-align: center;
+  padding: 40px 15px 20px;
+}
+
+.hero h2 {
+  font-size: 32px;
+}
+
+.hero p {
+  color: #667085;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 15px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product,
+.panel {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px #17234212;
+}
+
+.product img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #edf2f7;
+}
+
+.product h3 {
+  margin-top: 12px;
+}
+
+.product p {
+  color: #667085;
+}
+
+.price {
+  display: block;
+  color: #087f68;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.primary {
+  background: #172342;
+  color: white;
+}
+
+.green {
+  background: #087f68;
+  color: white;
+}
+
+.light {
+  background: #edf2f7;
+  color: #172342;
+}
+
+.danger {
+  background: #fff0ee;
+  color: #a93226;
+}
+
+.wide {
+  width: 100%;
+}
+
+.panel {
+  margin-top: 30px;
+  padding: 22px;
+}
+
+.panel h2 {
+  margin-bottom: 15px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.quantity {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.quantity button {
+  padding: 5px 10px;
+}
+
+.total {
+  font-size: 23px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccd2dc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.small {
+  font-size: 13px;
+  color: #667085;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.admin-row {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+footer {
+  background: #172342;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  margin-top: 35px;
+}
+
+@media (max-width: 700px) {
+  .products {
+    grid-template-columns: 1fr;
+  }
+
+  .product img {
+    height: 230px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Click & Buy Maroc</h1>
+
+  <nav>
+    <a href="#products">Produits</a>
+    <a href="#cart">
+      🛒 Panier (<span id="cart-count">0</span>)
+    </a>
+    <button class="light" onclick="toggleAdmin()">
+      Administration
+    </button>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Nos produits</h2>
+  <p>Découvrez notre sélection</p>
+</section>
+
+<main>
+
+  <section class="products" id="products"></section>
+
+  <section class="panel" id="cart">
+    <h2>🛒 Mon panier</h2>
+
+    <div id="cart-items"></div>
+
+    <div class="total">
+      Total : <span id="cart-total">0</span> DH
+    </div>
+
+    <button class="green wide" onclick="goToCheckout()">
+      Passer la commande
+    </button>
+  </section>
+
+  <section class="panel" id="checkout">
+    <h2>Informations de livraison</h2>
+
+    <form id="checkout-form">
+
+      <div class="form-grid">
+        <div>
+          <label for="customer-name">Nom complet</label>
+          <input id="customer-name" required maxlength="100">
+        </div>
+
+        <div>
+          <label for="customer-phone">Téléphone</label>
+          <input id="customer-phone" type="tel"
+            required maxlength="20">
+        </div>
+
+        <div>
+          <label for="customer-city">Ville</label>
+          <input id="customer-city" required maxlength="80">
+        </div>
+
+        <div>
+          <label for="customer-address">Adresse</label>
+          <input id="customer-address" required maxlength="300">
+        </div>
+      </div>
+
+      <label for="payment">Mode de paiement</label>
+
+      <select id="payment">
+        <option value="Paiement à la livraison">
+          Paiement à la livraison
+        </option>
+      </select>
+
+      <button class="green" type="submit">
+        Commander sur WhatsApp
+      </button>
+
+      <p class="small">
+        Les frais de livraison sont à confirmer.
+        Aucune commande n'est envoyée automatiquement.
+      </p>
+
+    </form>
+  </section>
+
+  <section class="panel hidden" id="admin">
+    <h2>Administration des produits</h2>
+
+    <p class="small">
+      Cette administration est locale : les modifications
+      sont enregistrées dans ce navigateur seulement.
+      Elle n'est pas protégée par un mot de passe.
+    </p>
+
+    <form id="product-form">
+
+      <input type="hidden" id="edit-id">
+
+      <div>
+        <label for="p-name">Nom du produit</label>
+        <input id="p-name" required maxlength="80">
+      </div>
+
+      <div>
+        <label for="p-price">Prix en DH</label>
+        <input id="p-price" type="number"
+          min="0" step="1" required>
+      </div>
+
+      <div>
+        <label for="p-image">URL de l'image</label>
+        <input id="p-image" type="url"
+          placeholder="https://..." required>
+      </div>
+
+      <div>
+        <label for="p-description">Description</label>
+        <input id="p-description" required maxlength="180">
+      </div>
+
+      <button class="primary" type="submit">
+        Enregistrer le produit
+      </button>
+
+      <button class="light" type="button" onclick="resetForm()">
+        Annuler
+      </button>
+
+    </form>
+
+    <h3 style="margin-top:20px">Mes produits</h3>
+    <div id="admin-list"></div>
+
+    <button class="danger" onclick="restoreProducts()"
+      style="margin-top:15px">
+      Restaurer les produits de départ
+    </button>
+  </section>
+
+</main>
+
+<footer>
+  <h3>Click & Buy Maroc</h3>
+  <p>Votre boutique en ligne</p>
+  <p>Prix en dirhams marocains (DH)</p>
+</footer>
+
+<script>
+// Remplace par ton numéro WhatsApp marocain.
+// Format : 2126XXXXXXXX, sans + ni espaces.
+const WHATSAPP_NUMBER = "2126XXXXXXXX";
+
+const defaultProducts = [
+  {
+    id: 1,
+    name: "Montre connectée",
+    description: "Montre pour tous les jours.",
+    price: 199,
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 2,
+    name: "Sac à dos",
+    description: "Un sac pratique au quotidien.",
+    price: 149,
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: 3,
+    name: "T-shirt",
+    description: "Un modèle simple et confortable.",
+    price: 99,
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80"
+  }
+];
+
+function loadData(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+let products = loadData("cb_products", defaultProducts);
+let cart = loadData("cb_cart", {});
+
+function saveData() {
+  try {
+    localStorage.setItem("cb_products", JSON.stringify(products));
+    localStorage.setItem("cb_cart", JSON.stringify(cart));
+  } catch {
+    alert("Impossible de sauvegarder les données dans ce navigateur.");
+  }
+}
+
+function safe(text) {
+  return String(text).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function renderProducts() {
+  document.getElementById("products").innerHTML =
+    products.map(product => `
+      <article class="product">
+        <img src="${safe(product.image)}"
+          alt="${safe(product.name)}"
+          loading="lazy"
+          onerror="this.style.display='none'">
+
+        <h3>${safe(product.name)}</h3>
+        <p>${safe(product.description)}</p>
+
+        <span class="price">${product.price} DH</span>
+
+        <button class="primary wide"
+          onclick="addToCart(${product.id})">
+          Ajouter au panier
+        </button>
+      </article>
+    `).join("");
+}
+
+function addToCart(id) {
+  cart[id] = (Number(cart[id]) || 0) + 1;
+  refresh();
+}
+
+function changeQuantity(id, amount) {
+  cart[id] = (Number(cart[id]) || 0) + amount;
+
+  if (cart[id] <= 0) {
+    delete cart[id];
+  }
+
+  refresh();
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  refresh();
+}
+
+function renderCart() {
+  const items = products.filter(
+    product => Number(cart[product.id]) > 0
+  );
+
+  document.getElementById("cart-items").innerHTML =
+    items.length
+      ? items.map(product => `
+          <div class="cart-item">
+            <div>
+              <strong>${safe(product.name)}</strong>
+              <p>${product.price} DH × ${cart[product.id]}</p>
+            </div>
+
+            <div class="quantity">
+              <button class="light"
+                onclick="changeQuantity(${product.id}, -1)">−</button>
+
+              <span>${cart[product.id]}</span>
+
+              <button class="light"
+                onclick="changeQuantity(${product.id}, 1)">+</button>
+
+              <button class="danger"
+                onclick="removeFromCart(${product.id})">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        `).join("")
+      : "<p>Votre panier est vide.</p>";
+
+  const count = items.reduce(
+    (sum, product) => sum + Number(cart[product.id]), 0
+  );
+
+  const total = items.reduce(
+    (sum, product) =>
+      sum + product.price * Number(cart[product.id]), 0
+  );
+
+  document.getElementById("cart-count").textContent = count;
+  document.getElementById("cart-total").textContent = total;
+}
+
+function goToCheckout() {
+  if (!products.some(p => Number(cart[p.id]) > 0)) {
+    alert("Ajoutez un produit au panier d'abord.");
+    return;
+  }
+
+  document.getElementById("checkout").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+document.getElementById("checkout-form")
+  .addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const items = products.filter(
+      product => Number(cart[product.id]) > 0
+    );
+
+    if (!items.length) {
+      alert("Votre panier est vide.");
+      return;
+    }
+
+    if (WHATSAPP_NUMBER.includes("X")) {
+      alert(
+        "Remplace WHATSAPP_NUMBER dans le code par ton numéro WhatsApp."
+      );
+      return;
+    }
+
+    const total = items.reduce(
+      (sum, product) =>
+        sum + product.price * Number(cart[product.id]), 0
+    );
+
+    const message = [
+      "Nouvelle commande - Click & Buy Maroc",
+      "Nom : " + document.getElementById("customer-name").value,
+      "Téléphone : " + document.getElementById("customer-phone").value,
+      "Ville : " + document.getElementById("customer-city").value,
+      "Adresse : " + document.getElementById("customer-address").value,
+      "Paiement : Paiement à la livraison",
+      "Produits :",
+      ...items.map(product =>
+        "- " + product.name + " x " + cart[product.id] +
+        " = " + product.price * Number(cart[product.id]) + " DH"
+      ),
+      "Total produits : " + total + " DH",
+      "Frais de livraison : à confirmer"
+    ].join("\n");
+
+    const url = "https://wa.me/" + WHATSAPP_NUMBER +
+      "?text=" + encodeURIComponent(message);
+
+    window.open(url, "_blank");
+  });
+
+function toggleAdmin() {
+  document.getElementById("admin").classList.toggle("hidden");
+  renderAdmin();
+}
+
+function renderAdmin() {
+  document.getElementById("admin-list").innerHTML =
+    products.map(product => `
+      <div class="admin-row">
+        <span>
+          <strong>${safe(product.name)}</strong>
+          — ${product.price} DH
+        </span>
+
+        <span>
+          <button class="light"
+            onclick="editProduct(${product.id})">Modifier</button>
+
+          <button class="danger"
+            onclick="deleteProduct(${product.id})">Supprimer</button>
+        </span>
+      </div>
+    `).join("") || "<p>Aucun produit.</p>";
+}
+
+document.getElementById("product-form")
+  .addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const editId = document.getElementById("edit-id").value;
+    const name = document.getElementById("p-name").value.trim();
+    const price = Number(document.getElementById("p-price").value);
+    const image = document.getElementById("p-image").value.trim();
+    const description =
+      document.getElementById("p-description").value.trim();
+
+    if (!name || !description || !Number.isFinite(price) ||
+        price < 0 || !/^https?:\/\//i.test(image)) {
+      alert("Vérifiez les informations du produit.");
+      return;
+    }
+
+    const product = {
+      id: editId ? Number(editId) : Date.now(),
+      name,
+      price,
+      image,
+      description
+    };
+
+    if (editId) {
+      products = products.map(p =>
+        p.id === product.id ? product : p
+      );
+    } else {
+      products.push(product);
+    }
+
+    resetForm();
+    refresh();
+  });
+
+function editProduct(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  document.getElementById("edit-id").value = product.id;
+  document.getElementById("p-name").value = product.name;
+  document.getElementById("p-price").value = product.price;
+  document.getElementById("p-image").value = product.image;
+  document.getElementById("p-description").value =
+    product.description;
+
+  document.getElementById("product-form").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function deleteProduct(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  if (confirm("Supprimer " + product.name + " ?")) {
+    products = products.filter(p => p.id !== id);
+    delete cart[id];
+    refresh();
+  }
+}
+
+function resetForm() {
+  document.getElementById("product-form").reset();
+  document.getElementById("edit-id").value = "";
+}
+
+function restoreProducts() {
+  if (confirm("Restaurer les produits de départ ?")) {
+    products = defaultProducts.map(p => ({...p}));
+    cart = {};
+    refresh();
+  }
+}
+
+function refresh() {
+  renderProducts();
+  renderCart();
+  renderAdmin();
+  saveData();
+}
+
+refresh();
+</script>
+
+</body>
+</html>
